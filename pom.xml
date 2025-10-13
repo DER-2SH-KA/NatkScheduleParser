@@ -12,23 +12,16 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.telegrambots.version>6.9.7.1</org.telegrambots.version>
+        <org.telegrambots.version>9.2.0</org.telegrambots.version>
         <org.projectlombok.version>1.18.42</org.projectlombok.version>
         <org.jsoup.version>1.21.2</org.jsoup.version>
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots -->
+        <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots-longpolling -->
         <dependency>
             <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>${org.telegrambots.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.telegram/telegrambotsextensions -->
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambotsextensions</artifactId>
+            <artifactId>telegrambots-longpolling</artifactId>
             <version>${org.telegrambots.version}</version>
         </dependency>
 
