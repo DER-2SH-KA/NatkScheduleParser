@@ -17,7 +17,7 @@ public class Main {
     private static Properties properties = new Properties();
     private static final Parser parser = Parser.getInstance();
 
-    private static final String natkGroupsUrl = "https://natk.ru/stud-grad/schedule";
+    private static final String natkPr22101ScheduleUrl = "https://natk.ru/stud-grad/schedule/187?gid=244";
 
     public static void main(String[] args) {
         loadSettingsProperties();
@@ -25,7 +25,7 @@ public class Main {
         System.out.println(properties.getProperty("hello.world"));
         System.out.println(System.getenv("TELEGRAM_TOKEN"));
 
-        Optional<Document> document = parseDocument(natkGroupsUrl);
+        Optional<Document> document = parseDocument(natkPr22101ScheduleUrl);
 
         document.ifPresent(System.out::println);
     }
@@ -65,7 +65,7 @@ public class Main {
             ex.printStackTrace();
         }
         catch (IOException ex) {
-            System.err.println("IOException when connect to " + natkGroupsUrl);
+            System.err.println("IOException when connect to " + natkPr22101ScheduleUrl);
             ex.printStackTrace();
         }
 
