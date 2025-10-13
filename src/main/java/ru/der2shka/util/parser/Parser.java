@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -15,7 +16,6 @@ import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 
 public class Parser {
     private static Parser instance;
@@ -35,6 +35,14 @@ public class Parser {
         return instance;
     }
 
+    /**
+     * Get {@link Document} object from website.
+     * @param url {@link String} url object.
+     * @return {@link Document} object.
+     * @throws IOException if connection don't return result.
+     * @throws NoSuchAlgorithmException if SSL algorithm {@code TLS} wasn't found.
+     * @throws KeyManagementException sam hz.
+     * **/
     public Document getDocument(String url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
         SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(null, new TrustManager[] {
@@ -53,5 +61,16 @@ public class Parser {
                 .timeout(timeOut)
                 .referrer("https://ya.ru")
                 .get();
+    }
+
+    /**
+     * Get Table element from {@link Document}.
+     * @param doc {@link Document} object.
+     * @return {@link Elements} of table.
+     * **/
+    public Optional<Elements> getElementOfTable(Document doc) {
+        Elements table = doc.select("tbody");
+
+        return Optional.of(table);
     }
 }
