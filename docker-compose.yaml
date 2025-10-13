@@ -1,0 +1,6 @@
+services:
+  bot:
+    build: .
+    container_name: natk_schedule_bot
+    environment:
+      TELEGRAM_TOKEN: ${TELEGRAM_BOT_TOKEN}
