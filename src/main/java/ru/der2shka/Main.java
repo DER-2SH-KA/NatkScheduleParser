@@ -1,15 +1,22 @@
 package ru.der2shka;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.der2shka.exception.SettingsPropertiesIsEmptyException;
+import ru.der2shka.model.Class;
 import ru.der2shka.util.parser.Parser;
 import ru.der2shka.util.properties.PropertiesReader;
+import ru.der2shka.util.telegrambot.NatkTelegramBot;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -22,12 +29,20 @@ public class Main {
     public static void main(String[] args) {
         loadSettingsProperties();
 
-        System.out.println(properties.getProperty("hello.world"));
+        /*System.out.println(properties.getProperty("hello.world"));
         System.out.println(System.getenv("TELEGRAM_TOKEN"));
 
         Optional<Document> document = parseDocument(natkPr22101ScheduleUrl);
+        Optional<Elements> table = parser.getTable(document.get());
+        Optional<Elements> rows = parser.getRows(table.get());
 
-        document.ifPresent(System.out::println);
+        List<Class> classes = parser.getClasses(rows.get());
+
+        System.out.println(Arrays.deepToString(classes.toArray()));*/
+
+        System.out.println(System.getenv("TELEGRAM_TOKEN"));
+
+        registerBot();
     }
 
     private static void loadSettingsProperties() {
@@ -50,6 +65,9 @@ public class Main {
             System.err.println("Failed to load content from settings file");
             ex.printStackTrace();
         }
+        /*catch (Exception ex) {
+            ex.printStackTrace();
+        }*/
     }
 
     private static Optional<Document> parseDocument(String url) {
@@ -70,5 +88,17 @@ public class Main {
         }
 
         return document;
+    }
+
+    private static void registerBot() {
+        final String token = System.getenv("TELEGRAM_TOKEN");
+
+        try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
+            botsApplication.registerBot(token, new NatkTelegramBot(token));
+            System.out.println("MyAmazingBot successfully started!");
+            Thread.currentThread().join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
