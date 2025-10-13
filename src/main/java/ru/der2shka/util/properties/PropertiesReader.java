@@ -78,10 +78,10 @@ public class PropertiesReader {
         return properties;
     }
 
-    /*public static void printSettingsResourceURI() {
-        System.out.println(Main.class.getResource(settingsPropertiesFileName));
-    }*/
-
+    /**
+     * Load properties.
+     * @return {@link Properties} collection with settings properties.
+     * **/
     public static Properties loadSettingsProperties() {
         Properties properties = new Properties();
 
@@ -104,9 +104,9 @@ public class PropertiesReader {
             System.err.println("Failed to load content from settings file");
             ex.printStackTrace();
         }
-        /*catch (Exception ex) {
+        catch (Exception ex) {
             ex.printStackTrace();
-        }*/
+        }
 
         return properties;
     }

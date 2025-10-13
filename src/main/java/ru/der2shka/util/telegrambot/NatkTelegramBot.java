@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.der2shka.model.Class;
 import ru.der2shka.service.ParserService;
-import ru.der2shka.util.parser.Parser;
 import ru.der2shka.util.properties.PropertiesReader;
 
 import java.util.List;
@@ -85,6 +84,11 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
         properties = PropertiesReader.loadSettingsProperties();
     }
 
+    /**
+     * Create new {@link SendMessage} message for sending in Telegram.
+     * @param chatId chat's ID.
+     * @return {@link SendMessage}
+     * **/
     private SendMessage createSendMessage(long chatId, String message) {
         return SendMessage.builder()
                 .chatId(chatId)

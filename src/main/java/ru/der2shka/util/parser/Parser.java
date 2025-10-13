@@ -103,8 +103,6 @@ public class Parser {
 
         for (Element row : rows) {
             if (row.hasClass(classOfDate) && !firstDateFounded) {
-                // System.out.println("ROW IS DATE!");
-
                 tempDate = row.getElementsByTag("td").text();
                 firstDateFounded = true;
             }
@@ -119,8 +117,6 @@ public class Parser {
                 Elements tds = row.getElementsByTag("td");
 
                 if (tds.size() == 1) {
-                    // System.out.println("ROW IS ONE LINE SUBJECT!");
-
                     String subjectName = tds.select("span").text();
 
                     Subject subject = new Subject(
@@ -135,8 +131,6 @@ public class Parser {
                     newClass.setSubject(subject);
                 }
                 else {
-                    // System.out.println("ROW IS MULTI LINE SUBJECT!");
-
                     Integer seqNum = Integer.parseInt(tds.getFirst().text());
                     String timePeriod = tds.get(1).text();
 
@@ -166,8 +160,6 @@ public class Parser {
                 classes.add(newClass);
             }
         }
-
-        // System.out.println(Arrays.deepToString(classes.toArray()));
 
         return classes;
     }
