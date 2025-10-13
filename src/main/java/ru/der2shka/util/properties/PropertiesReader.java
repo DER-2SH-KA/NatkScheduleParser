@@ -78,7 +78,36 @@ public class PropertiesReader {
         return properties;
     }
 
-    public static void printSettingsResourceURI() {
+    /*public static void printSettingsResourceURI() {
         System.out.println(Main.class.getResource(settingsPropertiesFileName));
+    }*/
+
+    public static Properties loadSettingsProperties() {
+        Properties properties = new Properties();
+
+        try {
+            properties = getSettingsProperties();
+        }
+        catch (URISyntaxException ex) {
+            System.err.println("URI syntax of settings file exception");
+            ex.printStackTrace();
+        }
+        catch (SettingsPropertiesIsEmptyException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+        catch (FileNotFoundException ex) {
+            System.err.println("File of settings not found.");
+            ex.printStackTrace();
+        }
+        catch (IOException ex) {
+            System.err.println("Failed to load content from settings file");
+            ex.printStackTrace();
+        }
+        /*catch (Exception ex) {
+            ex.printStackTrace();
+        }*/
+
+        return properties;
     }
 }
