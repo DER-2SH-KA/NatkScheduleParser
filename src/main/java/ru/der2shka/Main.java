@@ -13,6 +13,9 @@ public class Main {
 
     public static void main(String[] args) {
         loadSettingsProperties();
+
+        System.out.println(properties.getProperty("hello.world"));
+        System.out.println(System.getenv("TELEGRAM_TOKEN"));
     }
 
     private static void loadSettingsProperties() {
