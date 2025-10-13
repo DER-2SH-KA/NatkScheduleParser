@@ -4,10 +4,7 @@ import ru.der2shka.Main;
 import ru.der2shka.exception.SettingsPropertiesFileNotFoundException;
 import ru.der2shka.exception.SettingsPropertiesIsEmptyException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,17 +30,12 @@ public class PropertiesReader {
     }
 
     /**
-     * Get {@link File} object by {@value settingsPropertiesFileName} file.
-     * @return {@link File} object.
-     * @throws NullPointerException if fileName is {@code null} or resource not found.
+     * Get {@link InputStream} object by {@value settingsPropertiesFileName} file.
+     * @return {@link InputStream}.
      * **/
-    public static Optional<File> getSettingsPropertiesFile() throws URISyntaxException {
-        return Optional.of(
-                new File(
-                        Objects.requireNonNull(
-                                Main.class.getResource(settingsPropertiesFileName)
-                        ).toURI()
-                )
+    public static Optional<InputStream> getSettingsPropertiesInputStream() {
+        return Optional.ofNullable(
+                Main.class.getResourceAsStream(settingsPropertiesFileName)
         );
     }
 
@@ -62,7 +54,7 @@ public class PropertiesReader {
     }
 
     /**
-     * Get {@link Properties} collection from {@value  settingsPropertiesFileName} content.
+     * Get {@link Properties} collection from {@value  settingsPropertiesFileName} {@link InputStream} content.
      * @return {@link Properties} collection with content from file.
      * @throws FileNotFoundException file wasn't found.
      * @throws IOException failed to load content from file to {@link Properties}.
@@ -71,15 +63,14 @@ public class PropertiesReader {
             throws IOException, FileNotFoundException, SettingsPropertiesIsEmptyException, URISyntaxException {
         Properties properties = new Properties();
 
-        Optional<File> file = getSettingsPropertiesFile();
-
-        properties.load(new FileReader(
-                        file.orElseThrow(() ->
-                                        new SettingsPropertiesFileNotFoundException(
-                                                settingsPropertiesFileName + " file not found exception"
-                                        )
-                        )
-        ));
+        try (InputStream inputStream =
+                     getSettingsPropertiesInputStream()
+                             .orElseThrow(() -> new SettingsPropertiesFileNotFoundException(
+                                     settingsPropertiesFileName + " file not found exception"
+                             ))
+        ) {
+            properties.load(inputStream);
+        }
 
         if (properties.isEmpty())
             throw new SettingsPropertiesIsEmptyException("Setting properties collection is empty after load!");
