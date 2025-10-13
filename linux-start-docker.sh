@@ -1,0 +1,1 @@
+docker-compose -p natk_bot up -d --build
