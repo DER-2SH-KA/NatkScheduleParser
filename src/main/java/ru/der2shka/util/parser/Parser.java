@@ -68,9 +68,20 @@ public class Parser {
      * @param doc {@link Document} object.
      * @return {@link Elements} of table.
      * **/
-    public Optional<Elements> getElementOfTable(Document doc) {
+    public Optional<Elements> getTable(Document doc) {
         Elements table = doc.select("tbody");
 
         return Optional.of(table);
+    }
+
+    /**
+     * Get Rows element from {@link Elements} of table.
+     * @param table {@link Elements} object of table.
+     * @return {@link Elements} of rows.
+     * **/
+    public Optional<Elements> getRows(Elements table) {
+        Elements rows = table.select("tr");
+
+        return Optional.of(rows);
     }
 }
