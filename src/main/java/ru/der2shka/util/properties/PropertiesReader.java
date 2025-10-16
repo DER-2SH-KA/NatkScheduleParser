@@ -1,6 +1,8 @@
 package ru.der2shka.util.properties;
 
 import ru.der2shka.Main;
+import ru.der2shka.exception.PropertiesFileNotFoundException;
+import ru.der2shka.exception.PropertiesIsEmptyException;
 import ru.der2shka.exception.SettingsPropertiesFileNotFoundException;
 import ru.der2shka.exception.SettingsPropertiesIsEmptyException;
 
@@ -11,21 +13,19 @@ import java.util.Optional;
 import java.util.Properties;
 
 public class PropertiesReader {
-    private static final String settingsPropertiesFileName = "settings.properties";
+    public static final String settingsPropertiesFileName = "settings.properties";
+    public static final String databaseSettingsFileName = "db.properties";
 
     /**
-     * Get {@link File} object by file name.
+     * Get {@link InputStream} object by file name.
      * @param fileName file name (include path to file).
-     * @return {@link File} object.
+     * @return {@link InputStream} object from file.
      * @throws NullPointerException if fileName is {@code null} or resource not found.
      * **/
-    public static Optional<File> getPropertiesFile(String fileName) throws URISyntaxException {
-        return Optional.of(
-                new File(
-                        Objects.requireNonNull(
-                                Main.class.getResource(fileName)
-                        ).toURI()
-                )
+    private static Optional<InputStream> getPropertiesInputStream(String fileName) {
+        return Optional.ofNullable(
+                Main.class
+                        .getResourceAsStream(fileName)
         );
     }
 
@@ -33,22 +33,31 @@ public class PropertiesReader {
      * Get {@link InputStream} object by {@value settingsPropertiesFileName} file.
      * @return {@link InputStream}.
      * **/
-    public static Optional<InputStream> getSettingsPropertiesInputStream() {
+    private static Optional<InputStream> getSettingsPropertiesInputStream() {
         return Optional.ofNullable(
                 Main.class.getResourceAsStream(settingsPropertiesFileName)
         );
     }
 
     /**
-     * Get {@link Properties} collection from {@link File} content.
-     * @param file {@link File} object.
+     * Get {@link Properties} collection from file by file name.
+     * @param fileName properties file name.
      * @return {@link Properties} collection with content from file.
      * @throws FileNotFoundException file wasn't found.
      * @throws IOException failed to load content from file to {@link Properties}.
      * **/
-    public static Properties getProperties(File file) throws IOException, FileNotFoundException {
+    private static Properties getProperties(String fileName)
+            throws IOException, FileNotFoundException, PropertiesFileNotFoundException, URISyntaxException {
         Properties properties = new Properties();
-        properties.load(new FileReader(file));
+
+        try (InputStream inputStream =
+                getPropertiesInputStream(fileName)
+                        .orElseThrow(() ->
+                                new PropertiesFileNotFoundException(fileName + " file was not found!")
+                        )
+        ) {
+            properties.load(inputStream);
+        }
 
         return properties;
     }
@@ -59,8 +68,8 @@ public class PropertiesReader {
      * @throws FileNotFoundException file wasn't found.
      * @throws IOException failed to load content from file to {@link Properties}.
      * **/
-    public static Properties getSettingsProperties()
-            throws IOException, FileNotFoundException, SettingsPropertiesIsEmptyException, URISyntaxException {
+    private static Properties getSettingsProperties()
+            throws IOException, FileNotFoundException, SettingsPropertiesFileNotFoundException, URISyntaxException {
         Properties properties = new Properties();
 
         try (InputStream inputStream =
@@ -79,8 +88,8 @@ public class PropertiesReader {
     }
 
     /**
-     * Load properties.
-     * @return {@link Properties} collection with settings properties.
+     * Load settings properties.
+     * @return {@link Properties} collection by {@value settingsPropertiesFileName}.
      * **/
     public static Properties loadSettingsProperties() {
         Properties properties = new Properties();
@@ -92,7 +101,41 @@ public class PropertiesReader {
             System.err.println("URI syntax of settings file exception");
             ex.printStackTrace();
         }
-        catch (SettingsPropertiesIsEmptyException ex) {
+        catch (SettingsPropertiesFileNotFoundException ex) {
+            System.err.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+        catch (FileNotFoundException ex) {
+            System.err.println("File of settings not found.");
+            ex.printStackTrace();
+        }
+        catch (IOException ex) {
+            System.err.println("Failed to load content from settings file");
+            ex.printStackTrace();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return properties;
+    }
+
+    /**
+     * Load properties from file.
+     * @param fileName file name.
+     * @return {@link Properties} collection by file.
+     * **/
+    public static Properties loadProperties(String fileName) {
+        Properties properties = new Properties();
+
+        try {
+            properties = getProperties(fileName);
+        }
+        catch (URISyntaxException ex) {
+            System.err.println("URI syntax of " + fileName + " file exception");
+            ex.printStackTrace();
+        }
+        catch (PropertiesFileNotFoundException ex) {
             System.err.println(ex.getMessage());
             ex.printStackTrace();
         }
