@@ -1,0 +1,14 @@
+# THIS IS EXAMPLE OF <database.properties> FILE STRUCTURE!
+# JUST COPY, EDIT AND RENAME IT TO USE!
+
+database.driver=<your_database_driver>
+database.url=<your_database_url>
+database.username=<your_database_owner_username>
+database.password=<your_database_owner_password>
+
+database.dialect=<your_database_dialect>
+
+database.show_sql=true
+database.format_sql=true
+
+database.hbm2ddl=update
