@@ -41,4 +41,4 @@ build/
 .env
 /.env
 
-./src/main/resources/ru/der2shka/database.properties
+src/main/resources/ru/der2shka/database.properties
