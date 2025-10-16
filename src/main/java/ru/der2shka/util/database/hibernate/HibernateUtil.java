@@ -6,7 +6,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
-import ru.der2shka.exception.PropertiesFileNotFoundException;
+import ru.der2shka.entity.ClassEntity;
+import ru.der2shka.exception.PropertiesIsEmptyException;
 import ru.der2shka.util.properties.PropertiesReader;
 
 import java.util.Objects;
@@ -31,8 +32,14 @@ public class HibernateUtil {
                 System.err.println(ex.getMessage());
                 ex.printStackTrace();
             }
+            finally {
+                System.out.println("Create instance of session factory");
+                System.out.println("Is null?: " + Objects.isNull(sessionFactory));
+            }
 
         }
+
+        if (databaseProperties.isEmpty()) throw new PropertiesIsEmptyException("Database settings file is empty");
 
         return sessionFactory;
     }
@@ -41,6 +48,8 @@ public class HibernateUtil {
         try {
             Configuration config = new Configuration();
             Properties databaseSettings = new Properties();
+
+            System.out.println(databaseProperties.getProperty("database.url"));
 
             databaseSettings.put(Environment.DRIVER, databaseProperties.getProperty("database.driver"));
             databaseSettings.put(Environment.URL, databaseProperties.getProperty("database.url"));
@@ -52,7 +61,12 @@ public class HibernateUtil {
             databaseSettings.put(Environment.SHOW_SQL, databaseProperties.getProperty("database.show_sql"));
             databaseSettings.put(Environment.FORMAT_SQL, databaseProperties.getProperty("database.format_sql"));
 
+            databaseSettings.put(Environment.HBM2DDL_AUTO, databaseProperties.getProperty("database.hbm2ddl"));
+
             config.setProperties(databaseSettings);
+
+            // Here all entity classes.
+            config.addAnnotatedClass(ClassEntity.class);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(config.getProperties())
