@@ -1,5 +1,5 @@
 package ru.der2shka.exception;
 
-public class SettingsPropertiesIsEmptyException extends RuntimeException {
+public class SettingsPropertiesIsEmptyException extends PropertiesIsEmptyException {
     public SettingsPropertiesIsEmptyException(String message) { super(message); }
 }
