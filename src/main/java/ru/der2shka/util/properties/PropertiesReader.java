@@ -2,19 +2,17 @@ package ru.der2shka.util.properties;
 
 import ru.der2shka.Main;
 import ru.der2shka.exception.PropertiesFileNotFoundException;
-import ru.der2shka.exception.PropertiesIsEmptyException;
 import ru.der2shka.exception.SettingsPropertiesFileNotFoundException;
 import ru.der2shka.exception.SettingsPropertiesIsEmptyException;
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
 public class PropertiesReader {
     public static final String settingsPropertiesFileName = "settings.properties";
-    public static final String databaseSettingsFileName = "db.properties";
+    public static final String databaseSettingsFileName = "database.properties";
 
     /**
      * Get {@link InputStream} object by file name.
