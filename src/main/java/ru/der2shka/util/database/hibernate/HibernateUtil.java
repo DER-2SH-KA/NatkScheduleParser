@@ -23,10 +23,10 @@ public class HibernateUtil {
     private static Properties databaseProperties = PropertiesReader
             .loadProperties(PropertiesReader.databaseSettingsFileName);
 
-    public static SessionFactory getSessionFactory() {
+    public static SessionFactory getSessionFactory(String profile) {
         if (Objects.isNull(sessionFactory)) {
             try {
-                sessionFactory = createSessionFactory()
+                sessionFactory = createSessionFactory(profile)
                         .orElseThrow(() ->
                                 new SessionException("Failed to create SessionFactory object")
                         );
@@ -47,7 +47,7 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    private static Optional<SessionFactory> createSessionFactory() {
+    private static Optional<SessionFactory> createSessionFactory(String profile) {
         try {
             Configuration config = new Configuration();
             Properties databaseSettings = new Properties();
@@ -55,24 +55,36 @@ public class HibernateUtil {
             System.out.println(databaseProperties.getProperty("database.url"));
 
             databaseSettings.put(Environment.DRIVER, databaseProperties.getProperty("database.driver"));
-            databaseSettings.put(
-                    Environment.URL, DotEnvReader.getValue("DB_URL")
-                            .orElseThrow(() ->
-                                    new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_URL")
-                            )
-            );
-            databaseSettings.put(
-                    Environment.USER, DotEnvReader.getValue("DB_USERNAME")
-                            .orElseThrow(() ->
-                                    new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_USERNAME")
-                            )
-            );
-            databaseSettings.put(
-                    Environment.PASS, DotEnvReader.getValue("DB_PASSWORD")
-                            .orElseThrow(() ->
-                                    new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_PASSWORD")
-                            )
-            );
+
+            if (profile.equals("prod")) {
+                databaseSettings.put(
+                        Environment.URL, DotEnvReader.getValue("DB_URL")
+                                .orElseThrow(() ->
+                                        new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_URL")
+                                )
+                );
+                databaseSettings.put(
+                        Environment.USER, DotEnvReader.getValue("DB_USERNAME")
+                                .orElseThrow(() ->
+                                        new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_USERNAME")
+                                )
+                );
+                databaseSettings.put(
+                        Environment.PASS, DotEnvReader.getValue("DB_PASSWORD")
+                                .orElseThrow(() ->
+                                        new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_PASSWORD")
+                                )
+                );
+            }
+            else if (profile.equals("dev")) {
+                databaseSettings.put(Environment.URL, databaseProperties.getProperty("database.url"));
+                databaseSettings.put(Environment.USER, databaseProperties.getProperty("database.username"));
+                databaseSettings.put(Environment.PASS, databaseProperties.getProperty("database.password"));
+            }
+            else {
+                throw new IllegalArgumentException("Incorrect ARG profile for start value!: " + profile);
+            }
+
             databaseSettings.put(Environment.DIALECT, databaseProperties.getProperty("database.dialect"));
 
             databaseSettings.put(Environment.SHOW_SQL, databaseProperties.getProperty("database.show_sql"));
