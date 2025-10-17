@@ -42,3 +42,5 @@ build/
 /.env
 
 src/main/resources/ru/der2shka/database.properties
+
+dependency-reduced-pom.xml
