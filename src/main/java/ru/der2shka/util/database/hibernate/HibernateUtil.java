@@ -56,27 +56,23 @@ public class HibernateUtil {
 
             databaseSettings.put(Environment.DRIVER, databaseProperties.getProperty("database.driver"));
             databaseSettings.put(
-                    Environment.URL,
-                    DotEnvReader.getValue("DB_URL")
+                    Environment.URL, DotEnvReader.getValue("DB_URL")
                             .orElseThrow(() ->
                                     new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_URL")
                             )
             );
             databaseSettings.put(
-                    Environment.USER,
-                    DotEnvReader.getValue("DB_USERNAME")
+                    Environment.USER, DotEnvReader.getValue("DB_USERNAME")
                             .orElseThrow(() ->
                                     new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_USERNAME")
                             )
             );
             databaseSettings.put(
-                    Environment.PASS,
-                    DotEnvReader.getValue("DB_PASSWORD")
+                    Environment.PASS, DotEnvReader.getValue("DB_PASSWORD")
                             .orElseThrow(() ->
                                     new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_PASSWORD")
                             )
             );
-
             databaseSettings.put(Environment.DIALECT, databaseProperties.getProperty("database.dialect"));
 
             databaseSettings.put(Environment.SHOW_SQL, databaseProperties.getProperty("database.show_sql"));
