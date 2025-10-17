@@ -6,7 +6,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class DotEnvReader {
-    private static Dotenv dotenv = Dotenv.load();
+    private static Dotenv dotenv = null;
+    public static boolean isExist = false;
 
     static {
         System.out.println("DotEnvReader is called!");
@@ -15,6 +16,8 @@ public class DotEnvReader {
     public static Dotenv getEnv() {
         if (Objects.isNull(dotenv)) {
             dotenv = Dotenv.load();
+
+            isExist = true;
 
             System.out.println(
                     Objects.nonNull(dotenv) ?
