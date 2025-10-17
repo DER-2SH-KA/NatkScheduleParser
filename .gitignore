@@ -41,4 +41,7 @@ build/
 .env
 /.env
 
+.env.test
+/.env.test
+
 dependency-reduced-pom.xml
