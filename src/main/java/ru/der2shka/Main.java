@@ -13,9 +13,13 @@ import java.util.Properties;
 public class Main {
 
     public static void main(String[] args) {
+        String profile = args[0].trim().toLowerCase();
+
+        if (profile.isBlank()) throw new IllegalArgumentException("ARG profile (args[0]) for start is empty!");
+
         DotEnvReader.getEnv();
 
-        getInstanceOfSessionFactory();
+        getInstanceOfSessionFactory(profile);
 
         registerBot();
     }
@@ -33,7 +37,7 @@ public class Main {
         }
     }
 
-    private static void getInstanceOfSessionFactory() {
-        HibernateUtil.getSessionFactory();
+    private static void getInstanceOfSessionFactory(String profile) {
+        HibernateUtil.getSessionFactory(profile);
     }
 }
