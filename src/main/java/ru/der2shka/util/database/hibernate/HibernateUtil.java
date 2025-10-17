@@ -7,7 +7,10 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import ru.der2shka.entity.ClassEntity;
+import ru.der2shka.exception.DocumentWasNotParsedException;
+import ru.der2shka.exception.DotEnvKeyValueIsEmptyOrNotExistException;
 import ru.der2shka.exception.PropertiesIsEmptyException;
+import ru.der2shka.util.dotenv.DotEnvReader;
 import ru.der2shka.util.properties.PropertiesReader;
 
 import java.util.Objects;
@@ -52,9 +55,27 @@ public class HibernateUtil {
             System.out.println(databaseProperties.getProperty("database.url"));
 
             databaseSettings.put(Environment.DRIVER, databaseProperties.getProperty("database.driver"));
-            databaseSettings.put(Environment.URL, databaseProperties.getProperty("database.url"));
-            databaseSettings.put(Environment.USER, databaseProperties.getProperty("database.username"));
-            databaseSettings.put(Environment.PASS, databaseProperties.getProperty("database.password"));
+            databaseSettings.put(
+                    Environment.URL,
+                    DotEnvReader.getValue("DB_URL")
+                            .orElseThrow(() ->
+                                    new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_URL")
+                            )
+            );
+            databaseSettings.put(
+                    Environment.USER,
+                    DotEnvReader.getValue("DB_USERNAME")
+                            .orElseThrow(() ->
+                                    new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_USERNAME")
+                            )
+            );
+            databaseSettings.put(
+                    Environment.PASS,
+                    DotEnvReader.getValue("DB_PASSWORD")
+                            .orElseThrow(() ->
+                                    new DotEnvKeyValueIsEmptyOrNotExistException("Value by key is empty!", "DB_PASSWORD")
+                            )
+            );
 
             databaseSettings.put(Environment.DIALECT, databaseProperties.getProperty("database.dialect"));
 
