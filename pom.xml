@@ -107,9 +107,16 @@
                     </execution>
                 </executions>
 
-                <!--<configuration>
-                    <minimizeJar>true</minimizeJar>
-                </configuration>-->
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
             </plugin>
 
             <plugin>
