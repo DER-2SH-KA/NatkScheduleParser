@@ -1,14 +1,9 @@
 package ru.der2shka;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import ru.der2shka.util.database.hibernate.HibernateUtil;
 import ru.der2shka.util.dotenv.DotEnvReader;
-import ru.der2shka.util.properties.PropertiesReader;
 import ru.der2shka.util.telegrambot.NatkTelegramBot;
-
-import java.util.Optional;
-import java.util.Properties;
 
 public class Main {
 
@@ -17,7 +12,14 @@ public class Main {
 
         if (profile.isBlank()) throw new IllegalArgumentException("ARG profile (args[0]) for start is empty!");
 
-        DotEnvReader.getEnv();
+        try {
+            DotEnvReader.getEnv();
+        }
+        catch (Exception ex) {
+            System.err.println(".env file wasn't loaded");
+            ex.printStackTrace();
+            DotEnvReader.isExist = false;
+        }
 
         getInstanceOfSessionFactory(profile);
 
