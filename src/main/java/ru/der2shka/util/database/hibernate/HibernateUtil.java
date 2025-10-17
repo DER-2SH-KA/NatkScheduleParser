@@ -7,7 +7,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import ru.der2shka.entity.ClassEntity;
-import ru.der2shka.exception.DocumentWasNotParsedException;
 import ru.der2shka.exception.DotEnvKeyValueIsEmptyOrNotExistException;
 import ru.der2shka.exception.PropertiesIsEmptyException;
 import ru.der2shka.util.dotenv.DotEnvReader;
@@ -56,7 +55,12 @@ public class HibernateUtil {
 
             databaseSettings.put(Environment.DRIVER, databaseProperties.getProperty("database.driver"));
 
-            if (profile.equals("prod")) {
+            if (profile.equals("prod") && DotEnvReader.isExist) {
+                System.out.println("Set PROD - TRUE profile settings");
+
+                System.out.println("URL: " + DotEnvReader.getValue("DB_URL"));
+                System.out.println("USERNAME: " + DotEnvReader.getValue("DB_USERNAME"));
+
                 databaseSettings.put(
                         Environment.URL, DotEnvReader.getValue("DB_URL")
                                 .orElseThrow(() ->
@@ -76,7 +80,22 @@ public class HibernateUtil {
                                 )
                 );
             }
+            else if (profile.equals("prod") && !DotEnvReader.isExist) {
+                System.out.println("Set PROD - FALSE profile settings");
+
+                System.out.println("URL: " + System.getenv("DB_URL"));
+                System.out.println("USERNAME: " + System.getenv("DB_USERNAME"));
+
+                databaseSettings.put(Environment.URL, System.getenv("DB_URL"));
+                databaseSettings.put(Environment.USER, System.getenv("DB_USERNAME"));
+                databaseSettings.put(Environment.PASS, System.getenv("DB_PASSWORD"));
+            }
             else if (profile.equals("dev")) {
+                System.out.println("Set DEV profile settings");
+
+                System.out.println("URL: " + databaseProperties.getProperty("database.url"));
+                System.out.println("USERNAME: " + databaseProperties.getProperty("database.username"));
+
                 databaseSettings.put(Environment.URL, databaseProperties.getProperty("database.url"));
                 databaseSettings.put(Environment.USER, databaseProperties.getProperty("database.username"));
                 databaseSettings.put(Environment.PASS, databaseProperties.getProperty("database.password"));
@@ -94,8 +113,7 @@ public class HibernateUtil {
 
             config.setProperties(databaseSettings);
 
-            // Here all entity classes.
-            config.addAnnotatedClass(ClassEntity.class);
+            addAnnotatedClasses(config);
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(config.getProperties())
@@ -110,5 +128,13 @@ public class HibernateUtil {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Add all entity classes to Hibernate configuration.
+     * @param config Hibernate {@link Configuration}.
+     * **/
+    private static void addAnnotatedClasses(Configuration config) {
+        config.addAnnotatedClass(ClassEntity.class);
     }
 }
