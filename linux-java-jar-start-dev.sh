@@ -1,0 +1,1 @@
+java -jar target\natkscheduleparser.jar dev
