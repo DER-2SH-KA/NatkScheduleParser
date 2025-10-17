@@ -7,6 +7,8 @@ services:
       DB_URL: ${DB_URL}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - my-network
     depends_on:
       - postgres
 
@@ -17,12 +19,13 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+    networks:
+      - my-network
     volumes:
       - pg_data:/var/lib/postgresql/data
 
 volumes:
   pg_data:
-    driver: local
 
 networks:
   my-network:
