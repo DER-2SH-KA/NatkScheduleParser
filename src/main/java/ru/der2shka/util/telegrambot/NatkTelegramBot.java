@@ -1,13 +1,16 @@
 package ru.der2shka.util.telegrambot;
 
+import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import ru.der2shka.exception.EntityWasNotSavedException;
 import ru.der2shka.model.Class;
 import ru.der2shka.service.ParserService;
+import ru.der2shka.service.StudyClassService;
 import ru.der2shka.util.properties.PropertiesReader;
 
 import java.util.List;
@@ -15,13 +18,16 @@ import java.util.Properties;
 
 public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
+    private final StudyClassService studyClassService;
 
     private static final ParserService parser = new ParserService();
 
     private Properties properties = new Properties();
 
-    public NatkTelegramBot(String token) {
+    public NatkTelegramBot(String token, StudyClassService studyClassService) {
+
         telegramClient = new OkHttpTelegramClient(token);
+        this.studyClassService = studyClassService;
 
         this.loadProperties();
         System.out.println("From NatkTelegramBot natk.url: " + properties.getProperty("natk.url"));
@@ -38,36 +44,20 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
             String updateText = update.getMessage().getText();
 
             if (updateText.toLowerCase().equals("сегодня")) {
-
-                System.out.println(properties.getProperty("natk.url"));
                 List<Class> classes = parser.getClasses(
                         properties.getProperty("natk.url")
                 );
 
-                if (!classes.isEmpty()) {
-                    String groupName = "ПР-22.101";
-                    String currentDate = classes.getFirst().getDate();
+                messageText = setMessageWhenSegodnya(classes);
 
-                    StringBuilder sb = new StringBuilder();
-
-                    sb.append(String.format("Группа: %s%n", groupName));
-                    sb.append(String.format("Дата: %s%n", currentDate));
-                    sb.append("\nРасписание:");
-
-                    for (Class classObj : classes) {
-                        if (classObj.getSubject().sequenceNumber() == -1) {
-                            sb.append("\n" + classObj.getSubject().name());
-                        }
-                        else {
-                            sb.append(String.format("%n%s пара%n", classObj.getSubject().sequenceNumber()));
-                            sb.append(String.format("Предмет: %s%n", classObj.getSubject().name()));
-                            sb.append(String.format("Преподаватель: %s%n", classObj.getSubject().teacherFIO()));
-                            sb.append(String.format("Место: %s%n", classObj.getSubject().address()));
-                        }
+                classes.forEach(c -> {
+                    if (!studyClassService.existsClassInDB(c)) {
+                        studyClassService.save(c)
+                                .orElseThrow(() ->
+                                        new EntityWasNotSavedException("Study class " + c + " was not saved!")
+                                );
                     }
-                    messageText = sb.toString();
-                }
-
+                });
             }
 
             SendMessage sendMessage = createSendMessage(chatId, messageText);
@@ -94,5 +84,35 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
                 .chatId(chatId)
                 .text(message)
                 .build();
+    }
+
+    private String setMessageWhenSegodnya(@NotNull List<Class> classes) {
+        String messageText = "";
+
+        if (!classes.isEmpty()) {
+            String groupName = "ПР-22.101";
+            String currentDate = classes.getFirst().getDate();
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(String.format("Группа: %s%n", groupName));
+            sb.append(String.format("Дата: %s%n", currentDate));
+            sb.append("\nРасписание:");
+
+            for (Class classObj : classes) {
+                if (classObj.getSubject().sequenceNumber() == -1) {
+                    sb.append("\n" + classObj.getSubject().name());
+                }
+                else {
+                    sb.append(String.format("%n%s пара%n", classObj.getSubject().sequenceNumber()));
+                    sb.append(String.format("Предмет: %s%n", classObj.getSubject().name()));
+                    sb.append(String.format("Преподаватель: %s%n", classObj.getSubject().teacherFIO()));
+                    sb.append(String.format("Место: %s%n", classObj.getSubject().address()));
+                }
+            }
+            messageText = sb.toString();
+        }
+
+        return messageText;
     }
 }
