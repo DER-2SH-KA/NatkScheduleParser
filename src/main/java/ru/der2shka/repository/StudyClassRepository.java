@@ -128,6 +128,8 @@ public class StudyClassRepository implements Repository<ClassEntity, Long> {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
+
+            throw new RuntimeException("Error deleting entity", ex);
         }
         finally {
             session.close();
@@ -166,6 +168,8 @@ public class StudyClassRepository implements Repository<ClassEntity, Long> {
             if (session.getTransaction().isActive()) {
                 session.getTransaction().rollback();
             }
+
+            throw new RuntimeException("Error deleting entity by ID", ex);
         }
         finally {
             session.close();
