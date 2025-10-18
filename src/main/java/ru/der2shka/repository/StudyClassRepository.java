@@ -148,7 +148,7 @@ public class StudyClassRepository implements Repository<ClassEntity, Long> {
             Transaction transaction = session.beginTransaction();
 
             final String request = "DELETE FROM ClassEntity ce WHERE ce.id = :id";
-            TypedQuery<ClassEntity> query = session.createQuery(request);
+            TypedQuery<ClassEntity> query = session.createQuery(request, ClassEntity.class);
             query.setParameter("id", id);
 
             int rowDeleted = query.executeUpdate();
