@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class StudyClassRepository {
+public class StudyClassRepository implements Repository<ClassEntity, Long> {
 
     /**
      * Save entity in database.
@@ -22,6 +22,7 @@ public class StudyClassRepository {
      * @throws NullPointerException if entity param is null.
      * @throws RuntimeException if transaction is failed (with rollback).
      * **/
+    @Override
     public Optional<ClassEntity> save(@NotNull ClassEntity entity) {
 
         Objects.requireNonNull(entity, "Entity must be not null!");
@@ -55,6 +56,7 @@ public class StudyClassRepository {
     /**
      * Find entities in database.
      * **/
+    @Override
     public List<ClassEntity> findAll() {
 
         try(Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -78,6 +80,7 @@ public class StudyClassRepository {
      * @param id entity's ID.
      * @throws NullPointerException if id param is null.
      * **/
+    @Override
     public Optional<ClassEntity> findById(@NotNull Long id) {
 
         Objects.requireNonNull(id, "Entities' ID must be not null!");
@@ -101,6 +104,7 @@ public class StudyClassRepository {
      * @throws NullPointerException if entity param is null.
      * @throws RuntimeException if transaction is failed (with rollback).
      * **/
+    @Override
     public void delete(@NotNull ClassEntity entity) {
 
         Objects.requireNonNull(entity, "Entity must be not null!");
@@ -112,9 +116,49 @@ public class StudyClassRepository {
 
             Transaction transaction = session.beginTransaction();
 
+            session.load(ClassEntity.class, entity.getId());
+
             session.remove(entity);
 
             transaction.commit();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+
+            if (session.getTransaction().isActive()) {
+                session.getTransaction().rollback();
+            }
+        }
+        finally {
+            session.close();
+        }
+    }
+
+    @Override
+    public void deleteById(@NotNull Long id) {
+        Objects.requireNonNull(id, "Entity's ID must be not null!");
+
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        try {
+
+            Transaction transaction = session.beginTransaction();
+
+            final String request = "DELETE FROM ClassEntity ce WHERE ce.id = :id";
+            TypedQuery<ClassEntity> query = session.createQuery(request);
+            query.setParameter("id", id);
+
+            int rowDeleted = query.executeUpdate();
+
+            transaction.commit();
+
+            if (rowDeleted == 0) {
+                System.out.println("Zero rows was deleted!");
+            }
+            else {
+                System.out.println(rowDeleted + " row was deleted!");
+            }
         }
         catch (Exception ex) {
             ex.printStackTrace();
