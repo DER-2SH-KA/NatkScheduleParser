@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class StudyClassService {
-    private final Repository<ClassEntity, Long> repository = new StudyClassRepository();
+    private final Repository<ClassEntity, Long> repository;
 
     /**
      * Check {@link Class} is exist in database.
