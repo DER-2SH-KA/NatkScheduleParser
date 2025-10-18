@@ -6,6 +6,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
+import org.jetbrains.annotations.NotNull;
 import ru.der2shka.entity.ClassEntity;
 import ru.der2shka.exception.DotEnvKeyValueIsEmptyOrNotExistException;
 import ru.der2shka.exception.PropertiesIsEmptyException;
@@ -22,7 +23,10 @@ public class HibernateUtil {
     private static Properties databaseProperties = PropertiesReader
             .loadProperties(PropertiesReader.databaseSettingsFileName);
 
-    public static SessionFactory getSessionFactory(String profile) {
+    public static SessionFactory getSessionFactory(@NotNull String profile) {
+
+        if (databaseProperties.isEmpty()) throw new PropertiesIsEmptyException("Database settings file is empty");
+
         if (Objects.isNull(sessionFactory)) {
             try {
                 sessionFactory = createSessionFactory(profile)
@@ -36,17 +40,21 @@ public class HibernateUtil {
             }
             finally {
                 System.out.println("Create instance of session factory");
-                System.out.println("Is null?: " + Objects.isNull(sessionFactory));
+                System.out.println("Is sessionFactory null?: " + Objects.isNull(sessionFactory));
             }
 
         }
 
-        if (databaseProperties.isEmpty()) throw new PropertiesIsEmptyException("Database settings file is empty");
+        return sessionFactory;
+    }
+
+    public static SessionFactory getSessionFactory() {
+        Objects.requireNonNull(sessionFactory, "Session factory wasn't initialized with profile before!");
 
         return sessionFactory;
     }
 
-    private static Optional<SessionFactory> createSessionFactory(String profile) {
+    private static Optional<SessionFactory> createSessionFactory(@NotNull String profile) {
         try {
             Configuration config = new Configuration();
             Properties databaseSettings = new Properties();
