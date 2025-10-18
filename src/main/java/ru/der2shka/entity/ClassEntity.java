@@ -3,6 +3,7 @@ package ru.der2shka.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -13,24 +14,31 @@ import java.util.Objects;
 public class ClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long id;
 
     @Column(name = "date")
+    @NotNull
     private String date;
 
     @Column(name = "seq_num")
+    @NotNull
     private Integer seqNum;
 
     @Column(name = "time_period", length = 20)
+    @NotNull
     private String timePeriod;
 
     @Column(name = "name", length = 100)
+    @NotNull
     private String name;
 
     @Column(name = "teacher_fio")
+    @NotNull
     private String teacherFio;
 
     @Column(name = "address", length = 255)
+    @NotNull
     private String address;
 
     @Override
@@ -43,7 +51,7 @@ public class ClassEntity {
      * @param entity {@link ClassEntity} object;
      * @return are equals this object and entity.
      * **/
-    public boolean equalsByFieldsExcludeId(ClassEntity entity) {
+    public boolean equalsByFieldsExcludeId(@NotNull ClassEntity entity) {
         return this.date.equals(entity.date) &&
                 this.seqNum == entity.seqNum &&
                 this.timePeriod.equals(entity.timePeriod) &&
