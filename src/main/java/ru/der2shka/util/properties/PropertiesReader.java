@@ -1,5 +1,7 @@
 package ru.der2shka.util.properties;
 
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import ru.der2shka.Main;
 import ru.der2shka.exception.PropertiesFileNotFoundException;
 import ru.der2shka.exception.SettingsPropertiesFileNotFoundException;
@@ -11,7 +13,10 @@ import java.util.Optional;
 import java.util.Properties;
 
 public class PropertiesReader {
+    @NonNls
     public static final String settingsPropertiesFileName = "settings.properties";
+
+    @NonNls
     public static final String databaseSettingsFileName = "database.properties";
 
     /**
@@ -20,7 +25,7 @@ public class PropertiesReader {
      * @return {@link InputStream} object from file.
      * @throws NullPointerException if fileName is {@code null} or resource not found.
      * **/
-    private static Optional<InputStream> getPropertiesInputStream(String fileName) {
+    private static Optional<InputStream> getPropertiesInputStream(@NotNull String fileName) {
         return Optional.ofNullable(
                 Main.class
                         .getResourceAsStream(fileName)
@@ -44,7 +49,7 @@ public class PropertiesReader {
      * @throws FileNotFoundException file wasn't found.
      * @throws IOException failed to load content from file to {@link Properties}.
      * **/
-    private static Properties getProperties(String fileName)
+    private static @NotNull Properties getProperties(@NotNull String fileName)
             throws IOException, FileNotFoundException, PropertiesFileNotFoundException, URISyntaxException {
         Properties properties = new Properties();
 
@@ -66,7 +71,7 @@ public class PropertiesReader {
      * @throws FileNotFoundException file wasn't found.
      * @throws IOException failed to load content from file to {@link Properties}.
      * **/
-    private static Properties getSettingsProperties()
+    private static @NotNull Properties getSettingsProperties()
             throws IOException, FileNotFoundException, SettingsPropertiesFileNotFoundException, URISyntaxException {
         Properties properties = new Properties();
 
@@ -89,7 +94,7 @@ public class PropertiesReader {
      * Load settings properties.
      * @return {@link Properties} collection by {@value settingsPropertiesFileName}.
      * **/
-    public static Properties loadSettingsProperties() {
+    public static @NotNull Properties loadSettingsProperties() {
         Properties properties = new Properties();
 
         try {
@@ -123,7 +128,7 @@ public class PropertiesReader {
      * @param fileName file name.
      * @return {@link Properties} collection by file.
      * **/
-    public static Properties loadProperties(String fileName) {
+    public static @NotNull Properties loadProperties(@NotNull String fileName) {
         Properties properties = new Properties();
 
         try {

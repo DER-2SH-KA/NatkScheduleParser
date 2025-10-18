@@ -2,6 +2,8 @@ package ru.der2shka.util.parser;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,11 +28,13 @@ public class Parser {
     @Setter
     private Integer timeOut = 0;
 
+    @NonNls
     private static final String userAgent =
             "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6";
+    @NonNls
     private static final String classOfDate = "background1";
 
-    public static Parser getInstance() {
+    public static @NotNull Parser getInstance() {
         if (Objects.isNull(instance)) {
             instance = new Parser();
         }
@@ -46,7 +50,9 @@ public class Parser {
      * @throws NoSuchAlgorithmException if SSL algorithm {@code TLS} wasn't found.
      * @throws KeyManagementException sam hz.
      * **/
-    public Document getDocument(String url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    public Document getDocument(@NotNull String url)
+            throws IOException, NoSuchAlgorithmException, KeyManagementException
+    {
         SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(null, new TrustManager[] {
                 new X509TrustManager() {
@@ -71,7 +77,7 @@ public class Parser {
      * @param doc {@link Document} object.
      * @return {@link Elements} of table.
      * **/
-    public Optional<Elements> getTable(Document doc) {
+    public Optional<Elements> getTable(@NotNull Document doc) {
         Elements table = doc.select("tbody");
 
         return Optional.of(table);
@@ -82,7 +88,7 @@ public class Parser {
      * @param table {@link Elements} object of table.
      * @return {@link Elements} of rows.
      * **/
-    public Optional<Elements> getRows(Elements table) {
+    public Optional<Elements> getRows(@NotNull Elements table) {
         Elements rows = table.select("tr");
 
         return Optional.of(rows);
@@ -93,7 +99,7 @@ public class Parser {
      * @param rows rows from table.
      * @return {@code List<Class>} list of classes.
      * **/
-    public List<Class> getClasses(Elements rows) {
+    public @NotNull List<Class> getClasses(@NotNull Elements rows) {
         List<Class> classes = new ArrayList<>();
 
         if (rows.isEmpty()) return classes;
@@ -112,7 +118,7 @@ public class Parser {
 
             if (!row.hasClass(classOfDate)) {
 
-                Class newClass = new Class();
+                Class newClass;
 
                 Elements tds = row.getElementsByTag("td");
 
@@ -127,8 +133,7 @@ public class Parser {
                             ""
                     );
 
-                    newClass.setDate(tempDate);
-                    newClass.setSubject(subject);
+                    newClass = new Class(tempDate, subject);
                 }
                 else {
                     Integer seqNum = Integer.parseInt(tds.getFirst().text());
@@ -151,10 +156,7 @@ public class Parser {
                             address
                     );
 
-                    newClass.setDate(tempDate);
-                    newClass.setSubject(subject);
-
-
+                    newClass = new Class(tempDate, subject);
                 }
 
                 classes.add(newClass);

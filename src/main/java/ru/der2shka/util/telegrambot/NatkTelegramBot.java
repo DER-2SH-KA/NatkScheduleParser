@@ -22,9 +22,10 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
 
     private static final ParserService parser = new ParserService();
 
+    @NotNull
     private Properties properties = new Properties();
 
-    public NatkTelegramBot(String token, StudyClassService studyClassService) {
+    public NatkTelegramBot(@NotNull String token, @NotNull StudyClassService studyClassService) {
 
         telegramClient = new OkHttpTelegramClient(token);
         this.studyClassService = studyClassService;
@@ -79,14 +80,14 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
      * @param chatId chat's ID.
      * @return {@link SendMessage}
      * **/
-    private SendMessage createSendMessage(long chatId, String message) {
+    private @NotNull SendMessage createSendMessage(long chatId, @NotNull String message) {
         return SendMessage.builder()
                 .chatId(chatId)
                 .text(message)
                 .build();
     }
 
-    private String setMessageWhenSegodnya(@NotNull List<Class> classes) {
+    private @NotNull String setMessageWhenSegodnya(@NotNull List<Class> classes) {
         String messageText = "";
 
         if (!classes.isEmpty()) {

@@ -23,7 +23,7 @@ public class HibernateUtil {
     private static Properties databaseProperties = PropertiesReader
             .loadProperties(PropertiesReader.databaseSettingsFileName);
 
-    public static SessionFactory getSessionFactory(@NotNull String profile) {
+    public static @NotNull SessionFactory getSessionFactory(@NotNull String profile) {
 
         if (databaseProperties.isEmpty()) throw new PropertiesIsEmptyException("Database settings file is empty");
 
@@ -48,7 +48,7 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    public static SessionFactory getSessionFactory() {
+    public static @NotNull SessionFactory getSessionFactory() {
         Objects.requireNonNull(sessionFactory, "Session factory wasn't initialized with profile before!");
 
         return sessionFactory;
@@ -142,7 +142,7 @@ public class HibernateUtil {
      * Add all entity classes to Hibernate configuration.
      * @param config Hibernate {@link Configuration}.
      * **/
-    private static void addAnnotatedClasses(Configuration config) {
+    private static void addAnnotatedClasses(@NotNull Configuration config) {
         config.addAnnotatedClass(ClassEntity.class);
     }
 }

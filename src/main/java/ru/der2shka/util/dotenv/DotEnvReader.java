@@ -1,11 +1,14 @@
 package ru.der2shka.util.dotenv;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
 
 public class DotEnvReader {
+    @Nullable
     private static Dotenv dotenv = null;
     public static boolean isExist = false;
 
@@ -29,7 +32,7 @@ public class DotEnvReader {
         return dotenv;
     }
 
-    public static Optional<String> getValue(String key) {
+    public static Optional<String> getValue(@NotNull String key) {
         return Optional.ofNullable(dotenv.get(key));
     }
 }
