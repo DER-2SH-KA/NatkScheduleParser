@@ -1,10 +1,14 @@
 package ru.der2shka.model;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 public class Class {
+    @NotNull
     private String date;
+
+    @NotNull
     private Subject subject;
 
     @Override
