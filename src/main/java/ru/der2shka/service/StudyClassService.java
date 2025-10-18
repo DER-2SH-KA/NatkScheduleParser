@@ -7,7 +7,6 @@ import ru.der2shka.entity.ClassEntity;
 import ru.der2shka.model.Class;
 import ru.der2shka.model.Subject;
 import ru.der2shka.repository.Repository;
-import ru.der2shka.repository.StudyClassRepository;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +14,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class StudyClassService {
+    @NotNull
     private final Repository<ClassEntity, Long> repository;
 
     /**
@@ -79,7 +79,7 @@ public class StudyClassService {
             ClassEntity savedEntity = repository.save(entityFromClass)
                     .orElseThrow(() -> new EntityNotFoundException("Class entity was not saved!"));
 
-            Class savedClass = new Class();
+
             Subject savedClassSubject = new Subject(
                     savedEntity.getSeqNum(),
                     savedEntity.getTimePeriod(),
@@ -88,8 +88,7 @@ public class StudyClassService {
                     savedEntity.getAddress()
             );
 
-            savedClass.setDate(savedEntity.getDate());
-            savedClass.setSubject(savedClassSubject);
+            Class savedClass = new Class(savedEntity.getDate(), savedClassSubject);
 
             return Optional.of(savedClass);
         }
