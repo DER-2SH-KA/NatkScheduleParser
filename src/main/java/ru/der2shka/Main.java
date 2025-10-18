@@ -1,11 +1,17 @@
 package ru.der2shka;
 
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
+import ru.der2shka.entity.ClassEntity;
+import ru.der2shka.repository.Repository;
+import ru.der2shka.repository.StudyClassRepository;
+import ru.der2shka.service.StudyClassService;
 import ru.der2shka.util.database.hibernate.HibernateUtil;
 import ru.der2shka.util.dotenv.DotEnvReader;
 import ru.der2shka.util.telegrambot.NatkTelegramBot;
 
 public class Main {
+    private static StudyClassService studyClassService;
+    private static Repository<ClassEntity, Long> studyClassRepository;
 
     public static void main(String[] args) {
         String profile = args[0].trim().toLowerCase();
@@ -23,6 +29,9 @@ public class Main {
 
         getInstanceOfSessionFactory(profile);
 
+        studyClassRepository = new StudyClassRepository();
+        studyClassService = new StudyClassService(studyClassRepository);
+
         registerBot();
     }
 
@@ -30,7 +39,7 @@ public class Main {
         final String token = System.getenv("TELEGRAM_TOKEN");
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
-            botsApplication.registerBot(token, new NatkTelegramBot(token));
+            botsApplication.registerBot(token, new NatkTelegramBot(token, studyClassService));
 
             System.out.println("MyAmazingBot successfully started!");
             Thread.currentThread().join();
