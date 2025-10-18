@@ -1,9 +1,13 @@
 package ru.der2shka.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "study_classes")
 public class ClassEntity {
