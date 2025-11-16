@@ -4,38 +4,38 @@ services:
     container_name: natk-schedule-bot
     environment:
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
-      DB_URL: ${DB_URL}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
+#      DB_URL: ${DB_URL}
+#      DB_USERNAME: ${DB_USERNAME}
+#      DB_PASSWORD: ${DB_PASSWORD}
     networks:
       - my-network
-    depends_on:
-      postgres:
-        condition: service_healthy
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
 
-  postgres:
-    image: postgres:16.9
-    container_name: postgres-natk
-    environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    # ONLY FOR TESTS!
-    # ports:
-    #  - 5433:5432
-    networks:
-      - my-network
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
-volumes:
-  pg_data:
+#  postgres:
+#    image: postgres:16.9
+#    container_name: postgres-natk
+#    environment:
+#      POSTGRES_USER: ${DB_USERNAME}
+#      POSTGRES_PASSWORD: ${DB_PASSWORD}
+#      POSTGRES_DB: ${DB_NAME}
+#    # ONLY FOR TESTS!
+#    # ports:
+#    #  - 5433:5432
+#    networks:
+#      - my-network
+#    volumes:
+#      - pg_data:/var/lib/postgresql/data
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+#
+#volumes:
+#  pg_data:
 
 networks:
   my-network:

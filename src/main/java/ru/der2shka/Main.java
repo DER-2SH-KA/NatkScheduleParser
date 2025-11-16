@@ -27,7 +27,7 @@ public class Main {
             DotEnvReader.isExist = false;
         }
 
-        getInstanceOfSessionFactory(profile);
+        // getInstanceOfSessionFactory(profile);
 
         studyClassRepository = new StudyClassRepository();
         studyClassService = new StudyClassService(studyClassRepository);
@@ -39,7 +39,10 @@ public class Main {
         final String token = System.getenv("TELEGRAM_TOKEN");
 
         try (TelegramBotsLongPollingApplication botsApplication = new TelegramBotsLongPollingApplication()) {
-            botsApplication.registerBot(token, new NatkTelegramBot(token, studyClassService));
+            // With DataBase.
+            // botsApplication.registerBot(token, new NatkTelegramBot(token, studyClassService));
+
+            botsApplication.registerBot(token, new NatkTelegramBot(token));
 
             System.out.println("MyAmazingBot successfully started!");
             Thread.currentThread().join();

@@ -5,6 +5,8 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import ru.der2shka.exception.EntityWasNotSavedException;
@@ -13,22 +15,25 @@ import ru.der2shka.service.ParserService;
 import ru.der2shka.service.StudyClassService;
 import ru.der2shka.util.properties.PropertiesReader;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
-    private final StudyClassService studyClassService;
+    // private final StudyClassService studyClassService;
 
     private static final ParserService parser = new ParserService();
 
     @NotNull
     private Properties properties = new Properties();
 
-    public NatkTelegramBot(@NotNull String token, @NotNull StudyClassService studyClassService) {
+    // public NatkTelegramBot(@NotNull String token, @NotNull StudyClassService studyClassService) {
+    public NatkTelegramBot(@NotNull String token) {
 
         telegramClient = new OkHttpTelegramClient(token);
-        this.studyClassService = studyClassService;
+        //this.studyClassService = studyClassService;
 
         this.loadProperties();
         System.out.println("From NatkTelegramBot natk.url: " + properties.getProperty("natk.url"));
@@ -49,26 +54,45 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
                         properties.getProperty("natk.url")
                 );
 
+                System.out.println(Arrays.deepToString(classes.toArray()));
+
                 messageText = setMessageWhenSegodnya(classes);
 
-                classes.forEach(c -> {
+                // DataBase work.
+                /*classes.forEach(c -> {
                     if (!studyClassService.existsClassInDB(c)) {
                         studyClassService.save(c)
                                 .orElseThrow(() ->
                                         new EntityWasNotSavedException("Study class " + c + " was not saved!")
                                 );
                     }
-                });
+                });*/
             }
 
             SendMessage sendMessage = createSendMessage(chatId, messageText);
 
             try {
+                sendMessage.setReplyMarkup(getCustomKeyboard("Сегодня", "Завтра (не работает)"));
+
                 telegramClient.execute(sendMessage);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private ReplyKeyboardMarkup getCustomKeyboard(@NotNull String... rowsText) {
+
+        final List<KeyboardRow> keyboard = new ArrayList<>();
+
+        for (String text : rowsText) {
+            KeyboardRow row = new KeyboardRow();
+            row.add(text);
+
+            keyboard.add(row);
+        }
+
+        return new ReplyKeyboardMarkup(keyboard);
     }
 
     private void loadProperties() {

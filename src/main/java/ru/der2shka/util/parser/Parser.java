@@ -123,7 +123,7 @@ public class Parser {
                 Elements tds = row.getElementsByTag("td");
 
                 if (tds.size() == 1) {
-                    String subjectName = tds.select("span").text();
+                    String subjectName = tds.text();
 
                     Subject subject = new Subject(
                             -1,
