@@ -56,7 +56,7 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
 
                 System.out.println(Arrays.deepToString(classes.toArray()));
 
-                messageText = setMessageWhenSegodnya(classes);
+                messageText = TelegramMessagesGenerator.generateMessageWhenSegodnya(classes);
 
                 // DataBase work.
                 /*classes.forEach(c -> {
@@ -109,35 +109,5 @@ public class NatkTelegramBot implements LongPollingSingleThreadUpdateConsumer {
                 .chatId(chatId)
                 .text(message)
                 .build();
-    }
-
-    private @NotNull String setMessageWhenSegodnya(@NotNull List<Class> classes) {
-        String messageText = "";
-
-        if (!classes.isEmpty()) {
-            String groupName = "ПР-22.101";
-            String currentDate = classes.getFirst().getDate();
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.append(String.format("Группа: %s%n", groupName));
-            sb.append(String.format("Дата: %s%n", currentDate));
-            sb.append("\nРасписание:");
-
-            for (Class classObj : classes) {
-                if (classObj.getSubject().sequenceNumber() == -1) {
-                    sb.append("\n" + classObj.getSubject().name());
-                }
-                else {
-                    sb.append(String.format("%n%s пара%n", classObj.getSubject().sequenceNumber()));
-                    sb.append(String.format("Предмет: %s%n", classObj.getSubject().name()));
-                    sb.append(String.format("Преподаватель: %s%n", classObj.getSubject().teacherFIO()));
-                    sb.append(String.format("Место: %s%n", classObj.getSubject().address()));
-                }
-            }
-            messageText = sb.toString();
-        }
-
-        return messageText;
     }
 }
